@@ -46,6 +46,27 @@ export default function NewsFetcher({ uriEncodedString }: newsFetcherProps) {
   const tags: ReactNode = news
     ? news.map((item: newsInfo) => <NewsCard data={item} key={item.title} />)
     : <div></div>;
+  
+  // 뉴스 받아오고 나서 백엔드에 저장 (로그인 사용자만)
+const saveHistory = async (items: newsInfo[]) => {
+  const userId = localStorage.getItem("userId"); // 로그인한 사용자 ID 저장되어 있다고 가정
+  if (!userId) return;
+
+  try {
+    await fetch("/api/history/save", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        userId,
+        query: decodeURI(uriEncodedString),
+        resultJson: JSON.stringify(items),
+      }),
+    });
+  } catch (err) {
+    console.error("백엔드 저장 실패:", err);
+  }
+};
+
     
   return <div className="w-11/12 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-6">
     {tags}</div>;

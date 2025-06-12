@@ -1,9 +1,15 @@
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 export default function Header() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // 임시 로그인 상태
-  const navigate = useNavigate(); // 페이지 이동용
+  const navigate = useNavigate();
+  const isLoggedIn = !!localStorage.getItem("userId");
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("userId");
+    alert("로그아웃 되었습니다.");
+    navigate("/login");
+  };
 
   return (
     <header className="relative bg-red-200 text-gray-800 py-4 shadow-md">
@@ -11,11 +17,10 @@ export default function Header() {
         📰 News Pocket
       </h1>
 
-      {/* 오른쪽 하단 버튼 */}
       <div className="absolute right-4 bottom-2 flex gap-3">
         {isLoggedIn ? (
           <button
-            onClick={() => setIsLoggedIn(false)}
+            onClick={handleLogout}
             className="text-sm px-3 py-1 bg-yellow-500 text-white rounded hover:bg-red-600 transition"
           >
             로그아웃

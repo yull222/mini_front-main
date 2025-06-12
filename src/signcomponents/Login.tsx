@@ -8,18 +8,26 @@ export default function LoginForm() {
 
   const loginHandler = async (e: React.FormEvent) => {
     e.preventDefault();
-    const res = await fetch("/auth/signin", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username, password }),
-    });
-    if (res.ok) {
-      const token = await res.text();
-      localStorage.setItem("token", token);
-      alert("로그인 성공");
-      navigate("/");
-    } else {
-      alert("로그인 실패");
+
+    try {
+      const res = await fetch("/auth/signin", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password }),
+      });
+
+      if (res.ok) {
+        const data = await res.json(); // 백엔드에서 { token, userId } 형태로 응답하도록
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("userId", data.userId); //userId 저장
+        alert("로그인 성공");
+        navigate("/");
+      } else {
+        alert("로그인 실패: 아이디 또는 비밀번호를 확인하세요.");
+      }
+    } catch (err) {
+      console.error("로그인 에러:", err);
+      alert("로그인 중 오류 발생");
     }
   };
 
